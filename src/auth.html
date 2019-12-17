@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+    <style type="text/css">
+        html {
+            text-align: center;
+            font-size: 125%;
+            font-family: Helvetica, sans-serif;
+            color: #333366;
+        }
+        a {
+            text-decoration: none;
+            color: black;
+        }
+    </style>
+    <link rel="SHORTCUT ICON" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+<h1>Пожалуйста, войдите в свою учетную запись, чтобы просмотреть каталог</h1>
+    <form method="post" action="/">
+        <input name="username" placeholder="Логин"/>
+        <br><br><input name="password" type="password" placeholder="Пароль"/>
+        <br><br><a href="/auth/catalog"><button type="submit">Войти</button></a>
+        <h2>Нет учетной записи? Нажмите <a href="/signup">здесь</a>, чтобы зарегистироваться</h2>
+    </form>
+</body>
+</html>

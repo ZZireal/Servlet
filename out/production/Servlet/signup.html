@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+    <style type="text/css">
+        html {
+            text-align: center;
+            font-size: 125%;
+            font-family: Helvetica, sans-serif;
+            color: #333366;
+        }
+        a {
+            text-decoration: none;
+            color: black;
+        }
+    </style>
+    <link rel="SHORTCUT ICON" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+<h1>Пожалуйста, зарегистрируйтесь, чтобы просмотреть каталог</h1>
+    <form method="post" action="/">
+        <input name="username" placeholder="Логин"/>
+        <br><br><input name="l_name" placeholder="Фамилия"/>
+        <br><br><input name="f_name" placeholder="Имя"/>
+        <br><br><input name="email" type="email" placeholder="Электронный ящик"/>
+        <br><br><input name="country" placeholder="Страна проживания"/>
+        <br><br><input name="password" type="password" placeholder="Пароль"/>
+        <br><br><button type="submit"><a href="/auth/catalog/DB">Зарегистироваться</a></button>
+        <h2>Есть учетная запись? Нажмите <a href="/auth">здесь</a>, чтобы войти</h2>
+    </form>
+</body>
+</html>
