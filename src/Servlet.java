@@ -1,31 +1,20 @@
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Properties;
 import java.sql.*;
-import java.util.ResourceBundle;
+import java.util.Map;
+import java.util.Set;
 
 class Servlet extends HttpServlet {
     String AuthHtml;
     String SignupHtml;
     String CatalogHtml;
     String DBHtml;
-    // String FaviconIco;
     Servlet() {
         super();
         try {
@@ -33,7 +22,6 @@ class Servlet extends HttpServlet {
             this.SignupHtml = Files.readString(Paths.get("C:/Users/zzire/Desktop/Servlet/src/signup.html"));
             this.CatalogHtml = Files.readString(Paths.get("C:/Users/zzire/Desktop/Servlet/src/catalog.html"));
             this.DBHtml = Files.readString(Paths.get("C:/Users/zzire/Desktop/Servlet/src/DB.html"));
-            //   this.FaviconIco = Files.readString(Paths.get("C:/Users/zzire/Desktop/Servlet/src/favicon.ico"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -47,44 +35,6 @@ class Servlet extends HttpServlet {
             Connection cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/catalog",
                     "root", "root");
             System.out.println("----- Проверка 2: соединение с БД установилось.");
-
-            /* выборка всех данных таблицы game в консоль*/
-            /*
-            Statement st = cn.createStatement();
-            ResultSet rs = st.executeQuery("select * from game");
-            ResultSetMetaData rsmd = rs.getMetaData();
-            System.out.println("Количество столбцов в таблице 'game': "+ rsmd.getColumnCount());
-            for (int i = 1; i <= 8; i++) {
-                System.out.printf("%30s", rsmd.getColumnName(i) + " (" + rsmd.getColumnTypeName(i) + ")");
-            }
-            System.out.println("\n");
-            rs.next();
-            while (rs.next() == true) {
-            for (int i = 1; i <= 8; i++) {
-                System.out.printf("%30s", rs.getString(i));
-            }
-            System.out.println("\n");
-            rs.next();
-            }
-            */
-            /* выборка всех данных таблицы game на страницу*/
-/*
-            Statement st = cn.createStatement();
-            ResultSet rs = st.executeQuery("select * from game");
-            ResultSetMetaData rsmd = rs.getMetaData();
-            rs.next();
-            System.out.println("Количество столбцов в таблице 'game': "+ rsmd.getColumnCount());
-            while (rs.next()) {
-                for (int i = 1; i <= 8; i++) {
-                    resp.getOutputStream().print("Название столбца: " + rsmd.getColumnName(i));
-                    resp.getOutputStream().print(", тип данных столбца: " + rsmd.getColumnTypeName(i));
-                    resp.getOutputStream().println(", содержимое столбца: " + rs.getString(i) + "\n");
-                }
-                rs.next();
-                resp.getOutputStream().println("\n");
-            }
-*/
-
         } catch (SQLException e) {
             System.out.println("----- Проверка 2: соединение с БД не установилось. Возникли ошибки.");
             e.printStackTrace();
@@ -93,7 +43,6 @@ class Servlet extends HttpServlet {
         HttpSession session = req.getSession();
         session.setAttribute("userId", "testId");
         System.out.println("----- Проверка 3: тестовому пользователю " + session.getAttribute("userId") + " установлена сессия.");
-
 
         switch (req.getRequestURI()) {
             case "/auth":
@@ -115,33 +64,57 @@ class Servlet extends HttpServlet {
                             "<head>" +
                             "<meta charset=\"UTF-8\">" +
                             "<title>Просмотр БД</title> " +
-                            "<style type=\"text/css\">\n" +
+                            " <style type=\"text/css\">\n" +
                             "        html {\n" +
+                            "            padding-left: 40px;\n" +
+                            "        }\n" +
+                            "        input {\n" +
+                            "            font-size: 110%;\n" +
+                            "            padding-top: 2px;\n" +
+                            "            padding-bottom: 8px;\n" +
+                            "            width: 300px;\n" +
                             "            text-align: center;\n" +
-                            "            font-size: 125%;\n" +
                             "            font-family: Helvetica, sans-serif;\n" +
-                            "            color: #333366;\n" +
                             "        }\n" +
-                            "        form, table, tbody {\n" +
-                            "            text-align: center;}\n" +
-                            "        a {\n" +
-                            "            text-decoration: none;\n" +
-                            "            color: black;\n" +
+                            "        button {\n" +
+                            "            font-size: 110%;\n" +
+                            "            padding-top: 2px;\n" +
+                            "            padding-bottom: 8px;\n" +
+                            "            text-align: center;\n" +
+                            "            font-family: Helvetica, sans-serif;\n" +
                             "        }\n" +
-                            "    </style>" +
+                            "        form {\n" +
+                            "            margin-top: 40px;\n" +
+                            "            margin-right: 5px;\n" +
+                            "            margin-bottom: 40px;\n" +
+                            "        }\n" +
+                            "        button {\n" +
+                            "            margin: 40px;\n" +
+                            "        }\n" +
+                            "        h1 {\n" +
+                            "            margin-bottom: 40px;\n" +
+                            "        }\n" +
+                            "    </style>\n" +
+                            "    <link rel=\"SHORTCUT ICON\" href=\"./favicon.ico\" type=\"image/x-icon\">\n" +
+                            "    <link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css\" integrity=\"sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh\" crossorigin=\"anonymous\">\n" +
                             "</head>" +
-                            "<body>" + "<h2>Нажмите <a href=\"/auth/catalog\">здесь</a>, чтобы вернуться к работе с каталогом</h2>");
+                            "<body>" + "<h2>Нажмите <a href=\"/auth/catalog\">здесь</a>, чтобы вернуться к работе с каталогом</h2>" +
+                            " <form method=\"post\" action=\"/\">\n" +
+                            "        <input name=\"search_title\" placeholder=\"Поиск по названию игры\">\n" +
+                            "        <button  class=\"btn btn-primary\" type=\"submit\">Найти в БД</button></form>" +
+                            " <form method=\"post\" action=\"/\">\n" +
+                            "        <input name=\"search_genre_name\" placeholder=\"Поиск по жанру\">\n" +
+                            "        <button  class=\"btn btn-primary\" type=\"submit\">Найти в БД</button></form>");
                     resp.getOutputStream().print("<form>" +
                             "<table>" +
                             "<tbody>");
                     /* выборка всех данных таблицы game на страницу*/
                     Statement st = cn.createStatement();
-                    /*ResultSet rs = st.executeQuery("select g.id, g.title, ge.genre_name, d.developer_name, p.publisher_name, g.debut\n" +
-                            "\tfrom game g \n" +
-                            "\t\t join genre ge on g.genre_id=ge.id\n" +
-                            "\t\t join developer d on g.developer_id=d.id\n" +
-                            "\t\t join publisher p on g.publisher_id=p.id;");*/
-                    ResultSet rs = st.executeQuery("select * from game");
+                    ResultSet rs = st.executeQuery("select g.id, g.title, ge.genre_name, g.descrip ,d.developer_name, p.publisher_name, g.debut, g.cost " +
+                            "from game g " +
+                            "inner join genre ge on g.genre_id=ge.id " +
+                            "inner join developer d on g.developer_id=d.id " +
+                            "inner join publisher p on g.publisher_id=p.id order by g.id;");
                     ResultSetMetaData rsmd = rs.getMetaData();
                     rs.first();
                     resp.getOutputStream().println("<tr>");
@@ -152,7 +125,7 @@ class Servlet extends HttpServlet {
                     do {
                         resp.getOutputStream().println("<tr>");
                         for (int i = 1; i <= rsmd.getColumnCount(); ) {
-                            resp.getOutputStream().println("<td>" +rs.getString(i) + "</td>");
+                            resp.getOutputStream().println("<td>" + rs.getString(i) + "</td>");
                             i++;
                         }
                         resp.getOutputStream().println("</tr>");
@@ -168,320 +141,31 @@ class Servlet extends HttpServlet {
                     System.out.println("----- Проверка 2: соединение с БД не установилось. Возникли ошибки.");
                     e.printStackTrace();
                 }
-
-                break;
-                /*
-                Connection cn = null;
-                try {
-                    cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/catalog",
-                            "root", "root");
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    Statement st = null;
-                    try {
-
-                        st = cn.createStatement();
-                        ResultSet rs = null;
-                        try {
-
-                            rs = st.executeQuery("SELECT * FROM game");
-                            ArrayList<Product> lst = new ArrayList<>();
-                            while (rs.next()) {
-                                int id = rs.getInt(1);
-                                String title = rs.getString(2);
-                                int genre_id = rs.getInt(3);
-                                String descrip = rs.getString(4);
-                                String debut = rs.getString(5);
-                                int developer_id = rs.getInt(6);
-                                int publisher_id = rs.getInt(7);
-                                String cost = rs.getString(8);
-                                lst.add(new Product(id, title, genre_id,
-                                        descrip, debut, developer_id,
-                                        publisher_id, cost));
-                            }
-                            if (lst.size() > 0) {
-                                resp.getOutputStream().println(String.valueOf(lst));
-                     Arrays.print(lst);
-                 *//*
-                            } else {
-                                resp.getOutputStream().println("Not found");
-                            }
-                        } finally {
-                            /*
-                             * закрыть ResultSet, если он был открыт
-                             * или ошибка произошла во время
-                             * чтения из него данных
-                             */
-                           /* if (rs != null) { // был ли создан ResultSet
-                                rs.close();
-                            } else {
-                                System.err.println(
-                                        "ошибка во время чтения из БД");
-                            }
-                        }
-                    } finally {
-                        /*
-                         * закрыть Statement, если он был открыт или ошибка
-                         * произошла во время создания Statement
-                         */
-                      /*  if (st != null) { // для 2-го блока try
-                            st.close();
-                        } else {
-                            System.err.println("Statement не создан");
-                        }
-                    }
-                } catch (SQLException e) { // для 1-го блока try
-                    System.err.println("DB connection error: " + e);
-                    /*
-                     * вывод сообщения о всех SQLException
-                     */
-               /* } finally {
-                    /*
-                     * закрыть Connection, если он был открыт
-                     */
-                    /*if (cn != null) {
-                        try {
-                            cn.close();
-                        } catch (SQLException e) {
-                            System.err.println("Сonnection close error: " + e);
-                        }
-                    }
-                }
-                break;*/
-            case "/auth/catalog/addDB":
-                try {
-                    System.out.println("----- Проверка 1: сейчас устанавливается соединение пользователя с БД...");
-                    Connection cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/catalog",
-                            "root", "root");
-                    System.out.println("----- Проверка 2: соединение пользователя с БД установилось.");
-                    resp.getOutputStream().println("<html>" +
-                            "<head>" +
-                            "<meta charset=\"UTF-8\">" +
-                            "<title>Просмотр БД</title> " +
-                            "<style type=\"text/css\">\n" +
-                            "        html {\n" +
-                            "            text-align: center;\n" +
-                            "            font-size: 125%;\n" +
-                            "            font-family: Helvetica, sans-serif;\n" +
-                            "            color: #333366;\n" +
-                            "        }\n" +
-                            "        form, table, tbody {\n" +
-                            "            text-align: center;}\n" +
-                            "        a {\n" +
-                            "            text-decoration: none;\n" +
-                            "            color: black;\n" +
-                            "        }\n" +
-                            "    </style>" +
-                            "</head>" +
-                            "<body>" + "<h2>Нажмите <a href=\"/auth/catalog\">здесь</a>, чтобы вернуться к работе с каталогом</h2>");
-                    resp.getOutputStream().print("<form>" +
-                            "<table>" +
-                            "<tbody>");
-
-                    /*ПОПЫТКА 1*/
-                    /*добавить продукт в таблицу game и вывести результат на страницу*/
-                    Statement st = cn.createStatement();
-                    st.executeUpdate("INSERT INTO game " +
-                            "(`title`, `genre_id`, `descrip`, `debut`, `developer_id`, `publisher_id`, `cost`) VALUES " +
-                            "(" + "'" + req.getParameter("title") + "'," +
-                            req.getParameter("genre_id") + ", " +
-                            "'" + req.getParameter("descrip") + "', " +
-                            "'2001-01-01', " +
-                            req.getParameter("developer_id") + ", " +
-                            req.getParameter("publisher_id") + ", " +
-                            "'1.00');");
-
-                    /*ПОПЫТКА 2*/
-                    /*добавить продукт в таблицу game и вывести результат на страницу*/
-                 /*Statement st = cn.createStatement();
-                 Product pub = new Product();
-                 st.executeUpdate("INSERT INTO game " +
-                         "(`title`, `genre_id`, `descrip`, `debut`, `developer_id`, `publisher_id`, `cost`) VALUES " +
-                         "(" + "'" + pub.getTitle(req.getParameter("title")) + "'," +
-                         "1, " +
-                         "'" + pub.getDescrip(req.getParameter("descrip")) + "', " +
-                         "'2001-01-01', " +
-                         "1, " +
-                         "1, " +
-                         "'1.00');");*/
-
-                    ResultSet rs = st.executeQuery("select * from game");
-                    ResultSetMetaData rsmd = rs.getMetaData();
-                    rs.first();
-                    for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-                        resp.getOutputStream().print("<td>" + rsmd.getColumnName(i) + " (" + rsmd.getColumnTypeName(i) + ") </td>");
-                    }
-                    resp.getOutputStream().println("</tr>");
-                    do {
-                        resp.getOutputStream().println("<tr>");
-                        for (int i = 1; i <= rsmd.getColumnCount(); ) {
-                            resp.getOutputStream().println("<td>" +rs.getString(i) + "</td>");
-                            i++;
-                        }
-                        resp.getOutputStream().println("</tr>");
-                    }
-                    while (rs.next());
-
-                    //   st.close();
-                    //  cn.close(); //закрыть соединение
-
-                } catch (SQLException e) {
-                    System.out.println("----- Проверка 2: соединение с БД не установилось. Возникли ошибки.");
-                    e.printStackTrace();
-                }
-                break;
-            case "/auth/catalog/deleteDB":
-                try {
-                    System.out.println("----- Проверка 1: сейчас устанавливается соединение пользователя с БД...");
-                    Connection cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/catalog",
-                            "root", "root");
-                    System.out.println("----- Проверка 2: соединение пользователя с БД установилось.");
-                    resp.getOutputStream().println("<html>" +
-                            "<head>" +
-                            "<meta charset=\"UTF-8\">" +
-                            "<title>Просмотр БД</title> " +
-                            "<style type=\"text/css\">\n" +
-                            "        html {\n" +
-                            "            text-align: center;\n" +
-                            "            font-size: 125%;\n" +
-                            "            font-family: Helvetica, sans-serif;\n" +
-                            "            color: #333366;\n" +
-                            "        }\n" +
-                            "        form, table, tbody {\n" +
-                            "            text-align: center;}\n" +
-                            "        a {\n" +
-                            "            text-decoration: none;\n" +
-                            "            color: black;\n" +
-                            "        }\n" +
-                            "    </style>" +
-                            "</head>" +
-                            "<body>" + "<h2>Нажмите <a href=\"/auth/catalog\">здесь</a>, чтобы вернуться к работе с каталогом</h2>");
-                    resp.getOutputStream().print("<form>" +
-                            "<table>" +
-                            "<tbody>");
-                    /*удалить последний продукт из таблицы game и вывести результат на страницу*/
-                    Statement st = cn.createStatement();
-                    st.executeUpdate("DELETE FROM game WHERE title LIKE 'New Title';");
-                    ResultSet rs = st.executeQuery("select * from game");
-                    ResultSetMetaData rsmd = rs.getMetaData();
-                    rs.first();
-                    for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-                        resp.getOutputStream().print("<td>" + rsmd.getColumnName(i) + " (" + rsmd.getColumnTypeName(i) + ") </td>");
-                    }
-                    resp.getOutputStream().println("</tr>");
-                    do {
-                        resp.getOutputStream().println("<tr>");
-                        for (int i = 1; i <= rsmd.getColumnCount(); ) {
-                            resp.getOutputStream().println("<td>" +rs.getString(i) + "</td>");
-                            i++;
-                        }
-                        resp.getOutputStream().println("</tr>");
-                    }
-                    while (rs.next());
-
-                    st.close();
-                    cn.close(); //закрыть соединение
-
-                } catch (SQLException e) {
-                    System.out.println("----- Проверка 2: соединение с БД не установилось. Возникли ошибки.");
-                    e.printStackTrace();
-                }
-                break;
-            case "/auth/catalog/updateDB":
-                try {
-                    System.out.println("----- Проверка 1: сейчас устанавливается соединение пользователя с БД...");
-                    Connection cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/catalog",
-                            "root", "root");
-                    System.out.println("----- Проверка 2: соединение пользователя с БД установилось.");
-                    resp.getOutputStream().println("<html>" +
-                            "<head>" +
-                            "<meta charset=\"UTF-8\">" +
-                            "<title>Просмотр БД</title> " +
-                            "<style type=\"text/css\">\n" +
-                            "        html {\n" +
-                            "            text-align: center;\n" +
-                            "            font-size: 125%;\n" +
-                            "            font-family: Helvetica, sans-serif;\n" +
-                            "            color: #333366;\n" +
-                            "        }\n" +
-                            "        form, table, tbody {\n" +
-                            "            text-align: center;}\n" +
-                            "        a {\n" +
-                            "            text-decoration: none;\n" +
-                            "            color: black;\n" +
-                            "        }\n" +
-                            "    </style>" +
-                            "</head>" +
-                            "<body>" + "<h2>Нажмите <a href=\"/auth/catalog\">здесь</a>, чтобы вернуться к работе с каталогом</h2>");
-                    resp.getOutputStream().print("<form>" +
-                            "<table>" +
-                            "<tbody>");
-                    /*изменить название 'New Title' на 'Updated New title' в таблице game и вывести результат на страницу*/
-                    Statement st = cn.createStatement();
-                    st.executeUpdate("UPDATE game SET title = 'Updated new title' WHERE title = 'New title';");
-                    ResultSet rs = st.executeQuery("select * from game");
-                    ResultSetMetaData rsmd = rs.getMetaData();
-                    rs.first();
-                    for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-                        resp.getOutputStream().print("<td>" + rsmd.getColumnName(i) + " (" + rsmd.getColumnTypeName(i) + ") </td>");
-                    }
-                    resp.getOutputStream().println("</tr>");
-                    do {
-                        resp.getOutputStream().println("<tr>");
-                        for (int i = 1; i <= rsmd.getColumnCount(); ) {
-                            resp.getOutputStream().println("<td>" +rs.getString(i) + "</td>");
-                            i++;
-                        }
-                        resp.getOutputStream().println("</tr>");
-                    }
-                    while (rs.next());
-
-                    st.close();
-                    cn.close(); //закрыть соединение
-
-                } catch (SQLException e) {
-                    System.out.println("----- Проверка 2: соединение с БД не установилось. Возникли ошибки.");
-                    e.printStackTrace();
-                }
-                break;
-            default:
-                resp.getOutputStream().println("Please, enter correct address.");
                 break;
         }
     }
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+        /*ОТПРАВЛЯЕТ В КОНСОЛЬ ВВЕДЕННЫЕ ЛОГИН И ПАРОЛЬ*/
         System.out.println("----- Отправлено с клиента -----");
         System.out.println("----- Логин: " + req.getParameter("username"));
         System.out.println("----- Пароль: " + req.getParameter("password"));
-        if (req.getParameter("username") != null && req.getParameter("password") != null) {
+        /*ЕСЛИ ЛОГИН И ПАРОЛЬ НЕ NULL, ТО ОТКРЫВАЕТ СТРАНИЦУ С КАТАЛОГОМ*/
+        if (req.getParameter("username") != null & req.getParameter("password") != null) {
             System.out.println("You are logged in!");
             resp.sendRedirect("/auth/catalog");
         }
 
-        Connection cn = null;
-        try {
-            cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/catalog",
-                    "root", "root");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-
-        if (req.getParameter("title") != null && req.getParameter("genre_id") != null ||
-                req.getParameter("descrip") != null || req.getParameter("debut") != null ||
-                req.getParameter("developer_id") != null || req.getParameter("publisher_id") != null  ||
+        /*ДОБАВЛЯЕТ ДАННЫЕ В БАЗУ ДАННЫХ ЕСЛИ ЗАПОЛНЕНЫ ВСЕ ПОЛЯ*/
+        if (req.getParameter("title") != null & req.getParameter("genre_id") != null &
+                req.getParameter("descrip") != null & req.getParameter("debut") != null &
+                req.getParameter("developer_id") != null & req.getParameter("publisher_id") != null &
                 req.getParameter("cost") != null) {
-            Statement st = null;
             try {
-                st = cn.createStatement();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
+                Connection cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/catalog",
+                        "root", "root");
+                Statement st = cn.createStatement();
                 st.executeUpdate("INSERT INTO game " +
                         "(`title`, `genre_id`, `descrip`, `debut`, `developer_id`, `publisher_id`, `cost`) VALUES " +
                         "(" + "'" + req.getParameter("title") + "'," +
@@ -491,13 +175,65 @@ class Servlet extends HttpServlet {
                         req.getParameter("developer_id") + ", " +
                         req.getParameter("publisher_id") + ", " +
                         "'" + req.getParameter("cost") + "')");
+                resp.sendRedirect("/auth/catalog/getDB");
+                st.close();
+                cn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        /*System.out.print(req.getParameter("title") + req.getParameter("genre_id") + req.getParameter("descrip") +
-               req.getParameter("debut") + req.getParameter("developer_id") + req.getParameter("publisher_id") +
-              req.getParameter("cost"));*/
-
         }
+
+            /*УДАЛЯЕТ ИЗ БД ИГРУ ПО НАЗВАНИЮ*/
+            if (req.getParameter("delete_title") != null) {
+                try {
+                    Connection cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/catalog",
+                            "root", "root");
+                    Statement st = cn.createStatement();
+                    System.out.println("Удаляем запись из БД");
+                    st.executeUpdate("delete from game where title = '" + req.getParameter("delete_title") + "';");
+                    System.out.println("Запись успешно удалена!");
+                    resp.sendRedirect("/auth/catalog/getDB");
+                    st.close();
+                    cn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            /*ИЗМЕНЯЕТ ИГРУ ПО НАЗВАНИЮ*/
+        if (req.getParameter("update_title") != null) {
+        Map<String, String[]> map = (Map<String, String[]>) req.getParameterMap();
+        Set <String> params = map.keySet();
+        String update_string = null;
+        for (String param: params) {
+            String requestValue = map.get(param) [0];
+            if (requestValue.length() > 0) {
+                if (param.equals("update_title")) {}
+                else
+                update_string = update_string + param.substring(4) + " = '" + requestValue + "', ";
+                System.out.println(update_string);
+            }
+        }
+
+            if (update_string != null) {
+                update_string = update_string.substring(4);
+                update_string = update_string.substring(0, update_string.length() - 2);
+                System.out.println(update_string);
+
+                try {
+                    Connection cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/catalog",
+                            "root", "root");
+                    Statement st = cn.createStatement();
+                    st.executeUpdate("UPDATE game SET " + update_string +
+                            " WHERE title = '" + req.getParameter("update_title") + "';");
+                    resp.sendRedirect("/auth/catalog/getDB");
+                    st.close();
+                    cn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 }

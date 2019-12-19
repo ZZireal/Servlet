@@ -5,14 +5,29 @@
     <title>Каталог</title>
     <style type="text/css">
         html {
-            text-align: center;
-            font-size: 125%;
-            font-family: Helvetica, sans-serif;
-            color: black;
+            padding-left: 40px;
         }
-        a {
-            text-decoration: none;
-            color: black;
+        input, button {
+            font-size: 110%;
+            padding-top: 2px;
+            padding-bottom: 8px;
+            text-align: center;
+            font-family: Helvetica, sans-serif;
+        }
+        form {
+            margin-top: 40px;
+            margin-right: 5px;
+            margin-bottom: 40px;
+        }
+        button {
+            margin: 40px;
+        }
+        h1 {
+            margin-bottom: 40px;
+        }
+        .input_update_title
+        {
+            width: 250px;
         }
     </style>
     <link rel="SHORTCUT ICON" href="./favicon.ico" type="image/x-icon">
@@ -20,25 +35,41 @@
 </head>
 <body>
 <h1>Добро пожаловать в каталог!</h1>
-<form method="post" action="/">
-    <!-- class="btn btn-primary" -->
-    <button type="submit"><a href="/auth/catalog/getDB">Просмотреть БД</a></button>
+    <!--  -->
+            <a href="/auth/catalog/getDB">
+                <button class="btn btn-primary" type="button">
+                    Просмотреть БД
+                </button>
+            </a>
 
-    <br><br> <form method="post" action="/">
-    <input name="title" placeholder="Название">
-    <input name="genre_id" placeholder="id жанра">
-    <input name="descrip" placeholder="Описание">
-    <input name="debut" placeholder="Дата выхода">
-    <input name="developer_id" placeholder="id разработчика">
-    <input name="publisher_id" placeholder="id издателя">
-    <input name="cost" type="text" placeholder="Цена">
-    <a href="/auth/catalog/addDB"><button type="submit">Добавить в БД</button></a>
-</form>
+    <form method="post" action="/">
+        <input name="title" placeholder="Название игры">
+        <input name="genre_id" placeholder="id жанра">
+        <input name="descrip" placeholder="Описание">
+        <input name="debut" placeholder="Дата выхода">
+        <input name="developer_id" placeholder="id разработчика">
+        <input name="publisher_id" placeholder="id издателя">
+        <input name="cost" placeholder="Цена">
+            <button class="btn btn-primary" type="submit">Добавить в БД</button>
+    </form>
+    <form method="post" action="/">
+        <input name="delete_title" placeholder="Название игры">
+        <button  class="btn btn-primary" type="submit">Удалить из БД</button>
+    </form>
+    <form method="post" action="/">
+        <input class="input_update_title" name="update_title" placeholder="Какую игру изменить (название)"><br><br>
+        <input name="new_title" placeholder="Новое название игры">
+        <input name="new_genre_id" placeholder="Новый id жанра">
+        <input name="new_descrip" placeholder="Новое описание">
+        <input name="new_debut" placeholder="Новая дата выхода">
+        <input name="new_developer_id" placeholder="Новый id разработчика">
+        <input name="new_publisher_id" placeholder="Новый id издателя">
+        <input name="new_cost" placeholder="Новая цена">
+     <button class="btn btn-primary" type="submit">Изменить в БД</button>
+    </form>
 
-    <br><br><button type="submit"><a href="/auth/catalog/deleteDB">Удалить из БД</a></button>
-    <br><br><button type="submit"><a href="/auth/catalog/updateDB">Изменить в БД</a></button>
+
     <h2>Нажмите <a href="/auth">здесь</a>, чтобы выйти</h2>
-</form>
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
